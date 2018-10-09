@@ -1,0 +1,25 @@
+def allignment_recursive(vocab_map, cost_matrix, sequence_1, sequence_2):
+
+    A = [[0 for x in range(len(sequence_2))] for y in range(len(sequence_1))]
+
+    for j in range(len(sequence_2)):
+        for i in range(len(sequence_1)):
+            A[i][j] = opt(vocab_map, cost_matrix, sequence_1, sequence_2, i, j)
+            print("assigned in A indexes i =", i, "and j =", j, "to value:", A[i][j])
+
+
+
+def opt(vocab_map, cost_matrix, sequence_1, sequence_2, i, j):
+    if i == 0:
+        return j * cost_matrix[vocab_map[sequence_1[i]]][vocab_map["*"]]
+    if j == 0:
+        return i * cost_matrix[vocab_map["*"]][vocab_map[sequence_2[j]]]
+
+    for j in range(len(sequence_2)):
+        for i in range(len(sequence_1)):
+            alpha = cost_matrix[vocab_map[sequence_1[i]]][vocab_map[sequence_2[j]]] #cost of the different letters
+            delta1= cost_matrix[vocab_map["*"]][vocab_map[sequence_2[j]]] #cost of a gap in sequence1
+            delta2 = cost_matrix[vocab_map[sequence_1[i]]][vocab_map["*"]] #cost of a gap in sequence2
+
+            return max(alpha + opt(vocab_map, cost_matrix, sequence_1, sequence_2, i-1, j-1), delta2 + opt(vocab_map, cost_matrix, sequence_1, sequence_2, i-1, j), delta2 + opt(vocab_map, cost_matrix, sequence_1, sequence_2, i, j-1))
+
